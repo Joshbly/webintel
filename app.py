@@ -175,7 +175,7 @@ class HTMLAnalyzer:
                 except Exception as minimal_error:
                     return {
                         'success': False,
-                        'error': f"All methods failed - Stealth requests: {str(e)} | Stealth httpx: {str(httpx_error)} | Minimal headers: {str(minimal_error)}",
+                        'error': f"All methods failed - Primary method: {str(e)} | Secondary method: {str(httpx_error)} | Minimal headers: {str(minimal_error)}",
                         'url': url
                     }
     
@@ -620,18 +620,18 @@ def main():
         timeout = st.slider("Request Timeout (seconds)", 5, 60, 15)
         max_urls = st.number_input("Max URLs to process per group", 1, 50, 10)
         
-        st.subheader("🕵️ Stealth Mode")
-        st.info("Advanced anti-detection features:")
+        st.subheader("🌐 Request Settings")
+        st.info("Advanced request features:")
         st.write("✅ Rotating User Agents (11 different browsers)")
         st.write("✅ Randomized Headers")
         st.write("✅ Random Delays (0.5-2.0s)")
         st.write("✅ Fresh Sessions per Request")
         st.write("✅ Multiple Fallback Methods")
         
-        stealth_delay = st.checkbox("Extra Stealth Delays", value=False, help="Add longer random delays between requests (2-5 seconds)")
+        stealth_delay = st.checkbox("Additional Delays", value=False, help="Add longer random delays between requests (2-5 seconds)")
         
         if stealth_delay:
-            st.warning("⏱️ Extra delays enabled - analysis will be slower but more stealthy")
+            st.warning("⏱️ Extra delays enabled - analysis will be slower")
     
     if analysis_mode == "🔍 Single Analysis":
         run_single_analysis(timeout, max_urls, stealth_delay)
@@ -739,10 +739,10 @@ def analyze_url_list(urls_text: str, max_urls: int, timeout: int, group_name: st
         status_text.text(f"Processing {group_name} {i+1}/{len(urls)}: {url}")
         progress_bar.progress((i + 1) / len(urls))
         
-        # Add extra stealth delay if enabled
+        # Add extra delay if enabled
         if stealth_delay and i > 0:  # Don't delay the first request
             extra_delay = random.uniform(2.0, 5.0)
-            status_text.text(f"🕵️ Stealth delay ({extra_delay:.1f}s) - Processing {group_name} {i+1}/{len(urls)}: {url}")
+            status_text.text(f"⏱️ Additional delay ({extra_delay:.1f}s) - Processing {group_name} {i+1}/{len(urls)}: {url}")
             time.sleep(extra_delay)
         
         # Fetch and analyze
